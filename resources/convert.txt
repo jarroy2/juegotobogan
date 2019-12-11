@@ -1,0 +1,211 @@
+import java.util.*;
+
+private static int Main()
+{
+  int n;
+  int a;
+  int b;
+  int[] players = new int[6];
+  boolean[] miss = new boolean[6];
+  int[] throws_Renamed = new int[1001];
+  TreeMap<Integer,Integer> ladder = new TreeMap<Integer,Integer>();
+  TreeMap<Integer,Integer> extra = new TreeMap<Integer,Integer>();
+
+  n = 0;
+  while ((throws_Renamed[n] = Integer.parseInt(ConsoleInput.readToWhiteSpace(true))).length() > 0)
+  {
+	if (throws_Renamed[n] == 0)
+	  break;
+
+	n++;
+  }
+
+  while ((n = Integer.parseInt(ConsoleInput.readToWhiteSpace(true))).length() > 0)
+  {
+	if (n == 0)
+	  break;
+
+	ladder.clear();
+	extra.clear();
+
+	while ((a = Integer.parseInt(ConsoleInput.readToWhiteSpace(true))).length() > 0 && (b = Integer.parseInt(ConsoleInput.readToWhiteSpace(true))).length() > 0)
+	{
+	  if (a == 0 && b == 0)
+		break;
+
+	  ladder.put(a, b);
+	}
+
+	while ((a = Integer.parseInt(ConsoleInput.readToWhiteSpace(true))).length() > 0)
+	{
+	  if (a == 0)
+		break;
+
+	  extra.put(Math.abs(a), a);
+	}
+
+	int winner;
+	int cur_player = 0;
+	for (int i = 0; i < 6; i++)
+	{
+	  miss[i] = false;
+	  players[i] = 0;
+	}
+	int cur_throw = 0;
+
+	while (true)
+	{
+	  if (miss[cur_player])
+	  {
+		miss[cur_player] = false;
+		cur_player++;
+		if (cur_player >= n)
+		{
+		  cur_player = 0;
+		}
+		continue;
+	  }
+
+	  if (players[cur_player] + throws_Renamed[cur_throw] > 100)
+	  {
+		cur_throw++;
+		cur_player++;
+		continue;
+	  }
+	  else if (players[cur_player] + throws_Renamed[cur_throw] == 100)
+	  {
+		winner = cur_player + 1;
+		break;
+	  }
+
+	  players[cur_player] += throws_Renamed[cur_throw];
+	  cur_throw++;
+
+	  if (ladder.containsKey(players[cur_player]))
+	  {
+		players[cur_player] = ladder.get(players[cur_player]);
+		if (players[cur_player] == 100)
+		{
+		  winner = cur_player + 1;
+		  break;
+		}
+	  }
+
+	  if (extra.containsKey(players[cur_player]))
+	  {
+		if (extra.get(players[cur_player]) < 0)
+		{
+		  miss[cur_player] = true;
+		}
+		else
+		{
+		  cur_player--;
+		}
+	  }
+
+	  cur_player++;
+	  if (cur_player >= n)
+	  {
+		cur_player = 0;
+	  }
+	}
+
+	System.out.print(winner);
+	System.out.print("\n");
+  }
+
+  return 0;
+}
+
+package tangible;
+
+//----------------------------------------------------------------------------------------
+//	Copyright © 2006 - 2015 Tangible Software Solutions Inc.
+//	This class can be used by anyone provided that the copyright notice remains intact.
+//
+//	This class provides the ability to convert basic C++ 'cin' behavior.
+//----------------------------------------------------------------------------------------
+public final class ConsoleInput
+{
+	private static boolean goodLastRead = false;
+	public static boolean lastReadWasGood()
+	{
+		return goodLastRead;
+	}
+
+	public static String readToWhiteSpace(boolean skipLeadingWhiteSpace)
+	{
+		String input = "";
+		char nextChar;
+		while (Character.isWhitespace(nextChar = (char)System.in.read()))
+		{
+			//accumulate leading white space if skipLeadingWhiteSpace is false:
+			if (!skipLeadingWhiteSpace)
+			{
+				input += nextChar;
+			}
+		}
+		//the first non white space character:
+		input += nextChar;
+
+		//accumulate characters until white space is reached:
+		while (!Character.isWhitespace(nextChar = (char)System.in.read()))
+		{
+			input += nextChar;
+		}
+
+		goodLastRead = input.length() > 0;
+		return input;
+	}
+
+	public static String scanfRead()
+	{
+		return scanfRead(null, -1);
+	}
+
+	public static String scanfRead(String unwantedSequence)
+	{
+		return scanfRead(unwantedSequence, -1);
+	}
+
+	public static String scanfRead(String unwantedSequence, int maxFieldLength)
+	{
+		String input = "";
+
+		char nextChar;
+		if (unwantedSequence != null)
+		{
+			nextChar = '\0';
+			for (int charIndex = 0; charIndex < unwantedSequence.length(); charIndex++)
+			{
+				if (Character.isWhitespace(unwantedSequence.charAt(charIndex)))
+				{
+					//ignore all subsequent white space:
+					while (Character.isWhitespace(nextChar = (char)System.in.read()))
+					{
+					}
+				}
+				else
+				{
+					//ensure each character matches the expected character in the sequence:
+					nextChar = (char)System.in.read();
+					if (nextChar != unwantedSequence.charAt(charIndex))
+						return null;
+				}
+			}
+
+			input = (new Character(nextChar)).toString();
+			if (maxFieldLength == 1)
+				return input;
+		}
+
+		while (!Character.isWhitespace(nextChar = (char)System.in.read()))
+		{
+			input += nextChar;
+			if (maxFieldLength == input.length())
+				return input;
+		}
+
+		return input;
+	}
+}
