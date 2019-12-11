@@ -41,7 +41,7 @@ public class Principal {
 
 		TreeMap<Integer, Integer> extra = new TreeMap<Integer, Integer>();
 
-		int ganador = 0, cur_jugadores, cur_tiros;
+		int ganador, cur_jugadores, cur_tiros;
 
 		n = 0;
 		st = new StringTokenizer(br.readLine());
@@ -49,10 +49,6 @@ public class Principal {
 		for (tiros[n] = Integer.parseInt(st.nextToken()); tiros[n] != 0 && st.hasMoreTokens(); n++) {
 			tiros[n] = Integer.parseInt(st.nextToken());
 		}
-
-//		for (tiros[n] = Integer.parseInt(br.readLine()); tiros[n] != 0; n++) {
-//			tiros[n] = Integer.parseInt(br.readLine());
-//		}
 
 		escalera.clear();
 		extra.clear();
@@ -81,14 +77,17 @@ public class Principal {
 				extra.put(Math.abs(a), a);
 
 			}
-
+			
+			ganador = 0;
 			cur_jugadores = 0;
+			cur_tiros = 0;
+			
 			for (int i = 0; i < 6; i++) {
 				fallos[i] = false;
 				jugadores[i] = 0;
 			}
 
-			cur_tiros = 0;
+			
 			while (true) {
 				if (fallos[cur_jugadores]) {
 					fallos[cur_jugadores] = false;
